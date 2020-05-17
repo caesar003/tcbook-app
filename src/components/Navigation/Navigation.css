@@ -1,0 +1,19 @@
+#navbar {
+  background-color: #000;
+}
+#navbar .col {
+  padding:0;
+}
+#navbar svg {
+  color : #fff;
+}
+#navbar p {
+  margin:0;
+  padding:10px
+}
+.current{
+  background-color: #ddd;
+}
+#navbar .current svg {
+  color:#000;
+}
