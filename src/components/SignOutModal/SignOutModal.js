@@ -1,26 +1,35 @@
 import React from 'react';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
 
 const SignOutModal = () => {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const showModal = () => {
+    setIsOpen(true);
+  }
+  const closeModal = () => {
+    setIsOpen(false);
+  }
   return (
-    <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div className="modal-dialog" role="document">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title" id="exampleModalLabel">Modal title</h5>
-            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div className="modal-body">
-            ...
-          </div>
-          <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" className="btn btn-primary">Save changes</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <Modal
+      show={isOpen}
+      onHide={closeModal}
+      animation={false}
+    >
+      <Modal.Header closeButton>
+      </Modal.Header>
+      <Modal.Body>
+        Do you really want to sign out?
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={()=>this.closeModal()}>
+          Cancel
+        </Button>
+        <Button variant="primary" onClick={()=>this.handleSignOut()}>
+          Sign me out
+        </Button>
+      </Modal.Footer>
+    </Modal>
   )
 }
 

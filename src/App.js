@@ -6,6 +6,7 @@ import Profile from './components/Profile/Profile';
 import Home from './components/Home/Home';
 import Search from './components/Search/Search';
 import Members from './components/Members/Members';
+import axios from 'axios';
 const api = 'http://localhost:3027/';
 
 
@@ -26,43 +27,105 @@ class App extends Component {
       msg:'',
       current:'',
       post: '',
-      Posts:[]
+      Posts:[],
+      Users: [],
+      fileToUpload:null,
+      fileName: ''
     }
   }
 
   componentDidMount(){
     this.fetchPost();
+    this.fetchUsers();
   }
 
   onPostChange = (e) => {
     this.setState({post:e.target.value});
   }
 
+  uploadFile = (file) => {
+    const data = new FormData();
+    data.append('file', file);
+    axios.post(api+'postMedia', data, {})
+      .then(res=>{
+        console.log(res.data);
+        this.submitPost(this.state.post, this.state.user.name, res.data)
+      })
+  }
+
+  submitPost = (post, username, attachment) => {
+    fetch(api+'post', {
+      method: 'post',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        post : post,
+        user_id : username,
+        attachment: attachment,
+      })
+    })
+      .then(response => response.json())
+      .then(response => {
+
+        this.fetchPost();
+        // if(response==='error'){
+        //   console.log('Error Signing Up!');
+        // } else {
+        //   console.log('Registration Successfull');
+        //   this.props.onRegistrationSuccess();
+        //   this.props.onRouteChange('signin');
+        // }
+      })
+  }
+
   onPostSubmit = () => {
+    // console.log('submitted');
     const post = this.state.post;
     const username = this.state.user.name;
-    if(post){
-      fetch(api+'post', {
-        method: 'post',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({
-          post : post,
-          user_id : username,
-        })
-      })
-        .then(response => response.json())
-        .then(response => {
-
-          this.fetchPost();
-          // if(response==='error'){
-          //   console.log('Error Signing Up!');
-          // } else {
-          //   console.log('Registration Successfull');
-          //   this.props.onRegistrationSuccess();
-          //   this.props.onRouteChange('signin');
-          // }
-        })
+    const file = this.state.fileToUpload;
+    if(file){
+      this.uploadFile(file);
+    } else if(post) {
+      this.submitPost(post, username);
     }
+  }
+
+  // onPostSubmit = () => {
+  //   const post = this.state.post;
+  //   const username = this.state.user.name;
+  //   if(post){
+  //     fetch(api+'post', {
+  //       method: 'post',
+  //       headers: {'Content-Type':'application/json'},
+  //       body: JSON.stringify({
+  //         post : post,
+  //         user_id : username,
+  //       })
+  //     })
+  //       .then(response => response.json())
+  //       .then(response => {
+  //
+  //         this.fetchPost();
+  //         // if(response==='error'){
+  //         //   console.log('Error Signing Up!');
+  //         // } else {
+  //         //   console.log('Registration Successfull');
+  //         //   this.props.onRegistrationSuccess();
+  //         //   this.props.onRouteChange('signin');
+  //         // }
+  //       })
+  //   }
+  // }
+
+  onFileInputChange = (e) => {
+    // console.log(!e.target.files[0]);
+    const file = e.target.files[0];
+    if(file){
+      this.setState({fileName:file.name});
+      this.setState({fileToUpload:file, loaded:0});
+    } else {
+      this.setState({fileName:''})
+    }
+    console.log(!file);
   }
   onRegistrationSuccess = () => {
     this.setState({signInMessage:true});
@@ -122,6 +185,14 @@ class App extends Component {
       })
   }
 
+  fetchUsers = () => {
+    fetch(api+'users')
+    .then(response=>response.json())
+    .then(response=>{
+      this.setState({Users:response});
+    })
+  }
+
   renderProfile = () => {
     return (
       <Profile
@@ -129,6 +200,7 @@ class App extends Component {
       />
     )
   }
+
 
   render(){
     return(
@@ -149,13 +221,17 @@ class App extends Component {
                   onPostChange={this.onPostChange}
                   onPostSubmit={this.onPostSubmit}
                   Posts={this.state.Posts}
+                  onFileInputChange={this.onFileInputChange}
+                  fileToUpload={this.state.fileName}
                 />
               :
                 (this.state.route==='search'?
                   <Search />
                 :(
                   this.state.route==='members'?
-                    <Members />
+                    <Members
+                      members={this.state.Users}
+                    />
                   :
                     this.renderProfile()
                   )

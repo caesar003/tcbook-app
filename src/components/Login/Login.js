@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSignInAlt} from '@fortawesome/free-solid-svg-icons';
+import {faAt} from '@fortawesome/free-solid-svg-icons';
+import {faKey} from '@fortawesome/free-solid-svg-icons';
+
 
 class Login extends Component {
   constructor(props){
@@ -69,23 +72,35 @@ class Login extends Component {
               <div>
                 <div className="form-group">
                   <label htmlFor="email">Email address</label>
-                  <input
-                    type="text"
-                    autoComplete="off"
-                    className="form-control"
-                    id="email"
-                    onChange={this.onEmailChange}
-                  />
+                  <div className="input-group">
+                    <div className="input-group-prepend">
+                      <span className="input-group-text">
+                        {<FontAwesomeIcon icon={faAt} />}
+                      </span>
+                    </div>
+                    <input
+                      type="text"
+                      autoComplete="off"
+                      className="form-control"
+                      id="email"
+                      onChange={this.onEmailChange}
+                    />
+                  </div>
                 </div>
                 <div className="form-group">
                   <label htmlFor="password">Password</label>
-                  <input
-                    type="password"
-                    autoComplete="off"
-                    className="form-control"
-                    id="password"
-                    onChange={this.onPasswordChange}
-                  />
+                  <div className="input-group">
+                    <div className="input-group-prepend">
+                      <span className="input-group-text">{<FontAwesomeIcon icon={faKey} />}</span>
+                    </div>
+                    <input
+                      type="password"
+                      autoComplete="off"
+                      className="form-control"
+                      id="password"
+                      onChange={this.onPasswordChange}
+                    />
+                  </div>
                 </div>
                 <button
                   type="submit"

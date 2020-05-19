@@ -1,0 +1,7 @@
+#headerCover {
+  padding: 0;
+}
+#headerCoverInner {
+  color:#fff;
+  background-color: rgba(20, 0, 0, 0.3);
+}

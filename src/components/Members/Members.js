@@ -1,10 +1,19 @@
 import React from 'react';
 
-const Members = () => {
+const Members = ({members}) => {
+
   return (
     <>
-      <p>this is member page</p>
-      <p>which later I intend to fill this with list of all registered members</p>
+    {
+      members.map((member, i) =>{
+        return (
+          <div key={members[i].id} className="container">
+            <h3>{members[i].username}</h3>
+          </div>
+        );
+      })
+    }
+
     </>
   )
 }
