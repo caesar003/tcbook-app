@@ -1,4 +1,7 @@
 import React from 'react';
+import './Members.css';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faEnvelope} from '@fortawesome/free-solid-svg-icons';
 
 const Members = ({members}) => {
 
@@ -8,7 +11,18 @@ const Members = ({members}) => {
       members.map((member, i) =>{
         return (
           <div key={members[i].id} className="container">
-            <h3>{members[i].username}</h3>
+            <div className="row justify-content-center align-items-center">
+              <div className="col-2 b">
+                foto
+              </div>
+              <div className="col-8 b">
+                <h4>{members[i].username}</h4>
+                <p>{members[i].origin}</p>
+              </div>
+              <div className="col-2 b envelope-icon">
+                <FontAwesomeIcon icon={faEnvelope} />
+              </div>
+            </div>
           </div>
         );
       })

@@ -2,6 +2,7 @@ import React from 'react';
 import moment from 'moment';
 import './Post/Post.css';
 import './Home.css';
+import ReactCrop from 'react-image-crop';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCommentAlt} from '@fortawesome/free-solid-svg-icons';
 import {faPaperclip} from '@fortawesome/free-solid-svg-icons';

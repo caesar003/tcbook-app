@@ -6,6 +6,7 @@ import Profile from './components/Profile/Profile';
 import Home from './components/Home/Home';
 import Search from './components/Search/Search';
 import Members from './components/Members/Members';
+import Chat from './components/Chat/Chat';
 import axios from 'axios';
 const api = 'http://localhost:3027/';
 
@@ -17,10 +18,14 @@ class App extends Component {
       route: 'signin',
       isSignedIn:false,
       user:{
-        id:'',
-        email:'',
-        name:'',
-        batch:'',
+        about: '',
+        dob: '',
+        email: '',
+        id: '',
+        origin: '',
+        profile_picture: '',
+        tcbatch: '',
+        username: ''
       },
       signInMessage:false,
       alertType:'',
@@ -67,18 +72,17 @@ class App extends Component {
       .then(response => {
 
         this.fetchPost();
-        // if(response==='error'){
-        //   console.log('Error Signing Up!');
-        // } else {
-        //   console.log('Registration Successfull');
-        //   this.props.onRegistrationSuccess();
-        //   this.props.onRouteChange('signin');
-        // }
+        /*if(response==='error'){
+          console.log('Error Signing Up!');
+        } else {
+          console.log('Registration Successfull');
+          this.props.onRegistrationSuccess();
+          this.props.onRouteChange('signin');
+        }*/
       })
   }
 
   onPostSubmit = () => {
-    // console.log('submitted');
     const post = this.state.post;
     const username = this.state.user.name;
     const file = this.state.fileToUpload;
@@ -89,35 +93,7 @@ class App extends Component {
     }
   }
 
-  // onPostSubmit = () => {
-  //   const post = this.state.post;
-  //   const username = this.state.user.name;
-  //   if(post){
-  //     fetch(api+'post', {
-  //       method: 'post',
-  //       headers: {'Content-Type':'application/json'},
-  //       body: JSON.stringify({
-  //         post : post,
-  //         user_id : username,
-  //       })
-  //     })
-  //       .then(response => response.json())
-  //       .then(response => {
-  //
-  //         this.fetchPost();
-  //         // if(response==='error'){
-  //         //   console.log('Error Signing Up!');
-  //         // } else {
-  //         //   console.log('Registration Successfull');
-  //         //   this.props.onRegistrationSuccess();
-  //         //   this.props.onRouteChange('signin');
-  //         // }
-  //       })
-  //   }
-  // }
-
   onFileInputChange = (e) => {
-    // console.log(!e.target.files[0]);
     const file = e.target.files[0];
     if(file){
       this.setState({fileName:file.name});
@@ -136,14 +112,27 @@ class App extends Component {
   loadUser = (user) => {
     this.setState({
       user:{
-        email:user.email,
-        name:user.username,
-        id:user.id,
-        batch:user.tcbatch,
+        about: user.about ,
+        dob: user.dob ,
+        email: user.email ,
+        id: user.id ,
+        origin: user.origin ,
+        profile_picture: user.profile_picture ,
+        tcbatch: user.tcbatch,
+        username: user.username
       }
     })
   }
-
+  onProfileUpdate = (formdata) => {
+    fetch(api+'profile-detail', {
+      method: 'put',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(formdata)
+    }).then(response=> response.json())
+      .then(response => {
+        console.log(response);
+      })
+  }
   onRouteChange = (route) => {
     if(route==='signin'){
       this.setState({isSignedIn:false})
@@ -153,7 +142,6 @@ class App extends Component {
     this.setState({current:route})
     this.setState({route:route});
   }
-
   renderLogin = () => {
     return (
       <Login
@@ -176,7 +164,6 @@ class App extends Component {
       />
     )
   }
-
   fetchPost = () => {
     fetch(api+'post')
       .then(response=>response.json())
@@ -184,7 +171,6 @@ class App extends Component {
         this.setState({Posts:response})
       })
   }
-
   fetchUsers = () => {
     fetch(api+'users')
     .then(response=>response.json())
@@ -192,16 +178,25 @@ class App extends Component {
       this.setState({Users:response});
     })
   }
-
   renderProfile = () => {
     return (
       <Profile
         user={this.state.user}
+        onProfileUpdate={this.onProfileUpdate}
       />
     )
   }
-
-
+  renderHome = () => {
+    return (
+      <Home
+        onPostChange={this.onPostChange}
+        onPostSubmit={this.onPostSubmit}
+        Posts={this.state.Posts}
+        onFileInputChange={this.onFileInputChange}
+        fileToUpload={this.state.fileName}
+      />
+    )
+  }
   render(){
     return(
       <div className="App">
@@ -217,13 +212,7 @@ class App extends Component {
                 current={this.state.current}
               />
               {this.state.route==='home'?
-                <Home
-                  onPostChange={this.onPostChange}
-                  onPostSubmit={this.onPostSubmit}
-                  Posts={this.state.Posts}
-                  onFileInputChange={this.onFileInputChange}
-                  fileToUpload={this.state.fileName}
-                />
+                this.renderHome()
               :
                 (this.state.route==='search'?
                   <Search />
@@ -233,7 +222,11 @@ class App extends Component {
                       members={this.state.Users}
                     />
                   :
+                    (this.state.route==='chat'?
+                      <Chat />
+                    :
                     this.renderProfile()
+                    )
                   )
                 )
               }

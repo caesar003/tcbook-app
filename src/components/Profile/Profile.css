@@ -1,7 +1,22 @@
 #headerCover {
-  padding: 0;
+   /* padding: 0;  */
+   height: 240px;
 }
 #headerCoverInner {
   color:#fff;
   background-color: rgba(20, 0, 0, 0.3);
+  height: 100%;
+}
+.profile-picture {
+  width: 55px;
+  border-radius: 50%;
+}
+#prof-picture-input {
+  height: 0.01px;
+  width: 0.01px;
+}
+#prof-pict-input-label {
+  position: absolute;
+  bottom: -25%;
+  right: 35%;
 }

@@ -6,6 +6,7 @@ import {faUserAlt} from '@fortawesome/free-solid-svg-icons';
 import {faSignOutAlt} from '@fortawesome/free-solid-svg-icons';
 import {faSearch} from '@fortawesome/free-solid-svg-icons';
 import {faUserFriends} from '@fortawesome/free-solid-svg-icons';
+import {faEnvelope} from '@fortawesome/free-solid-svg-icons';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 
@@ -55,6 +56,9 @@ const Navigation = ({onRouteChange, current}) => {
         </div>
         <div className={`col text-center ${current==='members'?'current':''}`}>
           <p onClick={()=>onRouteChange('members')}><FontAwesomeIcon icon={faUserFriends} /></p>
+        </div>
+        <div className={`col text-center ${current==='chat'?'current':''}`}>
+          <p onClick={()=> onRouteChange('chat')}><FontAwesomeIcon icon={faEnvelope} /></p>
         </div>
         <div className="col text-center">
           <p onClick={showModal}><FontAwesomeIcon icon={faSignOutAlt} /></p>

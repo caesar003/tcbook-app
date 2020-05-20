@@ -2,11 +2,13 @@ import React from 'react';
 import './Profile.css';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPencilAlt} from '@fortawesome/free-solid-svg-icons';
+import {faCameraRetro} from '@fortawesome/free-solid-svg-icons';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import moment from 'moment';
 
 
-const Profile = ({user}) => {
+const Profile = ({user, onProfileUpdate}) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const showModal = () => {
     setIsOpen(true);
@@ -14,18 +16,27 @@ const Profile = ({user}) => {
   const closeModal = () => {
     setIsOpen(false);
   }
+  const formdata = {
+    id: user.id,
+    name: user.username,
+    tcbatch: user.tcbatch,
+    origin: user.origin,
+    dob : user.dob,
+  }
   const update = () => {
-    console.log('updated');
+    onProfileUpdate(formdata);
   }
   const onNameChange = (e) => {
-    console.log(e.target.value);
+    formdata.name = e.target.value
   }
-  const onEmailChange = (e) => {
-    console.log(e.target.value);
-  }
-
   const onBatchChange = (e) => {
-    console.log(e.target.value);
+    formdata.tcbatch = e.target.value
+  }
+  const onOriginChange = (e) => {
+    formdata.origin = e.target.value
+  }
+  const onDateChange = (e) => {
+    formdata.dob = e.target.value;
   }
   return(
     <>
@@ -47,19 +58,8 @@ const Profile = ({user}) => {
                     type="text"
                     className="form-control"
                     id="name"
-                    defaultValue={user.name}
+                    defaultValue={user.username}
                     onChange={onNameChange}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="email">Email</label>
-                  <input
-                    type="email"
-                    className="form-control"
-                    id="email"
-                    defaultValue={user.email}
-                    onChange={onEmailChange}
                   />
                 </div>
 
@@ -76,12 +76,24 @@ const Profile = ({user}) => {
 
                 <div className="form-group">
                   <label htmlFor="origin">Origin</label>
-                  <input type="text" className="form-control" id="origin"/>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="origin"
+                    defaultValue={user.origin}
+                    onChange={onOriginChange}
+                  />
                 </div>
 
                 <div className="form-group">
                   <label htmlFor="dob">Date of Birth</label>
-                  <input type="date" className="form-control" id="dob"/>
+                  <input
+                    type="date"
+                    className="form-control"
+                    id="dob"
+                    defaultValue={user.dob}
+                    onChange={onDateChange}
+                  />
                 </div>
 
               </div>
@@ -98,27 +110,42 @@ const Profile = ({user}) => {
         </Modal.Footer>
       </Modal>
       <div
-        className="jumbotron"
+        className="container-fluid"
         id="headerCover"
         style={{
-          background:'url(http://localhost:3027/picture/landing_page1.png)',
+          background:'url(http://localhost:3027/picture/Crocus_Wallpaper_by_Roy_Tanck.jpg)',
           backgroundSize: 'cover',
           backgroundPosition: 'center center'
-          }}>
-        <div id="headerCoverInner" className="row justify-content-end">
-          <div className="col-5">
-            <h5>this is the header</h5>
-            <p>some text</p>
+          }}
+        >
+        <div id="headerCoverInner" className="row justify-content-around align-items-center">
+          <div className="col-4 d-flex justify-content-center">
+            <input
+              type="file"
+              id="prof-picture-input"
+            />
+            <img
+              className="img-fluid profile-picture"
+              src="http://localhost:3027/picture/avatar.jpg"
+              alt="avatar"
+            />
+            <label id="prof-pict-input-label" htmlFor="prof-picture-input">
+              <FontAwesomeIcon icon={faCameraRetro} />
+            </label>
           </div>
+          <div className="col-5">
+            <p>the quick brown fox jumps over tha lazy dog</p>
+          </div>
+
         </div>
       </div>
+
       <div className="container mt-2">
         <ul className="list-group">
-          <li className="list-group-item"> {user.name}</li>
-          <li className="list-group-item">TC batch {user.batch}</li>
-          <li className="list-group-item">email: {user.email}</li>
+          <li className="list-group-item"> {user.username}</li>
+          <li className="list-group-item">TC batch {user.tcbatch}</li>
           <li className="list-group-item">origin: {user.origin}</li>
-          <li className="list-group-item">Birthday: {user.dob}</li>
+          <li className="list-group-item">Birthday: {moment(user.dob).format('MMM Do YYYY')}</li>
         </ul>
         <div className="text-center">
           <button
