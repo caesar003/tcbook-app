@@ -23,9 +23,9 @@
 
 ## Profile
 - [x] Profile picture
-  - [x] image resize and crop
+- [x] image resize and crop
 - [] About
-- [] Cover Picture
+- [x] Cover Picture
 - [x] Information
 
 ## Members
