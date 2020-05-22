@@ -1,5 +1,5 @@
+/*
 #headerCover {
-   /* padding: 0;  */
    height: 240px;
 }
 #headerCoverInner {
@@ -19,4 +19,34 @@
   position: absolute;
   bottom: -25%;
   right: 35%;
+}
+*/
+#cover {
+  border:1px solid black;
+  min-height: 240px;
+  background: url('http://localhost:3027/picture/Crocus_Wallpaper_by_Roy_Tanck.jpg');
+  background-size: cover;
+  background-position: center center;
+}
+#cover-inner{
+  border:1px solid #00f;
+  height: 240px;
+  background: rgba(0,0,0,0.2);
+  color:#fff;
+}
+#cover-inner .col-5, #cover-inner .col-4 {
+  border: 1px solid grey;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.profile-picture {
+  width: 62px;
+  border-radius:50%;
+  border: 1px solid #ddd;
+}
+#profile-picture-button {
+  position: absolute;
+  right: 35%;
+  bottom:35%;
 }

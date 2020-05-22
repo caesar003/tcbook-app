@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faSignInAlt} from '@fortawesome/free-solid-svg-icons';
-import {faAt} from '@fortawesome/free-solid-svg-icons';
-import {faKey} from '@fortawesome/free-solid-svg-icons';
+import {faSignInAlt, faAt, faKey} from '@fortawesome/free-solid-svg-icons';
+import TextInputGroup from '../subComponents/TextInputGroup/TextInputGroup';
 
 
 class Login extends Component {
@@ -11,111 +10,110 @@ class Login extends Component {
     this.state={
       email:'',
       password:'',
-      formMessage: this.props.signInMessage,
-      alertType:this.props.alertType,
-      msg: this.props.msg,
+      formHasMessage: false,
+      messageType: '',
+      message: '',
     }
   }
 
-  onEmailChange = (event) => {
-    this.setState({email:event.target.value});
+  onEmailChange = (e) => {
+    this.clearMessage();
+    this.setState({email:e.target.value});
   }
 
-  onPasswordChange = (event) => {
-    this.setState({password:event.target.value});
+  onPasswordChange = (e) => {
+    this.clearMessage();
+    this.setState({password:e.target.value});
+  }
+  showSignInMessage = (messageType, message) => {
+    this.setState({
+      messageType: messageType,
+      message: message,
+      formHasMessage:true,
+    })
+  }
+  clearMessage = () => {
+    this.setState({
+      formHasMessage:false,
+    })
   }
 
-  onSubmitSignin = () => {
-    const email = this.state.email;
-    const password = this.state.password;
+  signingIn = (e) => {
+    e.preventDefault();
+    const email = this.state.email,
+          password = this.state.password;
     if(!email||!password){
-      this.setState({msg:'Please fill out all fields'});
-      this.setState({alertType:'alert-danger'});
-      this.setState({formMessage:true});
+      // send the error message if any of fields is empty.
+      this.showSignInMessage('alert alert-danger', 'Please fill out all fields!');
     } else {
-      fetch(this.props.api+'signin', {
-        method: 'post',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({
-          email: email,
-          password: password,
+      if(!/\S+@\S+\.\S+/.test(email)){
+        // check whether it's a valid email address by single '@' and '.' characters.
+        this.showSignInMessage('alert alert-danger', 'Please enter the correct email!');
+      } else {
+        fetch('http://localhost:3027/signin', {
+          method: 'post',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            email: email,
+            password: password,
+          })
         })
-      })
         .then(response => response.json())
-        .then(data => {
-          if(data==='400'){
-            this.setState({msg:'Email or (and) password is (are) incorrect!'});
-            this.setState({alertType:'alert-danger'});
-            this.setState({formMessage:true});
+        .then(data=>{
+          console.log(data);
+          if(data === '400'){
+            this.showSignInMessage('alert alert-danger', 'Either password or email is incorrect!');
           } else {
-            this.props.loadUser(data);
-            this.props.onRouteChange('home');
+            this.props.signingIn(data);
           }
-        })
-    }
-  }
+        }) // end fetch block
 
-  renderMessage = () => {
-    return (
-      <div className={`alert ${this.state.alertType}`}>{this.state.msg}</div>
-    );
+      }
+    }
   }
 
   render(){
-    const {onRouteChange} = this.props;
     return (
       <>
         <div className="container mt-3 pt-3">
           <div className="row justify-content-center">
             <div className="col-10">
               <h3>Login</h3>
-              <div>
-                <div className="form-group">
-                  <label htmlFor="email">Email address</label>
-                  <div className="input-group">
-                    <div className="input-group-prepend">
-                      <span className="input-group-text">
-                        {<FontAwesomeIcon icon={faAt} />}
-                      </span>
-                    </div>
-                    <input
-                      type="text"
-                      autoComplete="off"
-                      className="form-control"
-                      id="email"
-                      onChange={this.onEmailChange}
-                    />
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label htmlFor="password">Password</label>
-                  <div className="input-group">
-                    <div className="input-group-prepend">
-                      <span className="input-group-text">{<FontAwesomeIcon icon={faKey} />}</span>
-                    </div>
-                    <input
-                      type="password"
-                      autoComplete="off"
-                      className="form-control"
-                      id="password"
-                      onChange={this.onPasswordChange}
-                    />
-                  </div>
-                </div>
+              <form onSubmit={this.signingIn}>
+                <TextInputGroup
+                  label="Email address"
+                  type="text"
+                  id="email"
+                  icon={faAt}
+                  onChangeAction={this.onEmailChange}
+                />
+
+                <TextInputGroup
+                  label="Password"
+                  type="password"
+                  id="password"
+                  icon={faKey}
+                  onChangeAction={this.onPasswordChange}
+                />
                 <button
                   type="submit"
                   className="btn btn-primary"
-                  onClick={()=>this.onSubmitSignin()}
                 >
                   <FontAwesomeIcon icon={faSignInAlt} /> Login
                 </button>
                 <br />
                 <small className="text-muted">Don't have an account yet? <span
                   className="link"
-                  onClick={()=>onRouteChange('register')}
+                  onClick={()=> this.props.onRouteChange('register')}
                 > create one </span> here. </small>
-              </div>
-              {this.state.formMessage?this.renderMessage():''}
+              </form>
+              {
+                this.state.formHasMessage?
+                  <div className={this.state.messageType}>
+                    {this.state.message}
+                  </div>
+                :''
+              }
             </div>
           </div>
         </div>

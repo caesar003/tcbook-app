@@ -1,166 +1,180 @@
-import React from 'react';
+import React, {Component} from 'react';
 import './Profile.css';
+import ReactCrop from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
+import axios from 'axios';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faPencilAlt} from '@fortawesome/free-solid-svg-icons';
 import {faCameraRetro} from '@fortawesome/free-solid-svg-icons';
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import moment from 'moment';
 
 
-const Profile = ({user, onProfileUpdate}) => {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const showModal = () => {
-    setIsOpen(true);
-  }
-  const closeModal = () => {
-    setIsOpen(false);
-  }
-  const formdata = {
-    id: user.id,
-    name: user.username,
-    tcbatch: user.tcbatch,
-    origin: user.origin,
-    dob : user.dob,
-  }
-  const update = () => {
-    onProfileUpdate(formdata);
-  }
-  const onNameChange = (e) => {
-    formdata.name = e.target.value
-  }
-  const onBatchChange = (e) => {
-    formdata.tcbatch = e.target.value
-  }
-  const onOriginChange = (e) => {
-    formdata.origin = e.target.value
-  }
-  const onDateChange = (e) => {
-    formdata.dob = e.target.value;
-  }
-  return(
-    <>
-      <Modal
-        show={isOpen}
-        onHide={closeModal}
-        animation={false}
-      >
-        <Modal.Header closeButton>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="container">
-            <div className="row justify-content-center">
-              <div className="col-10">
 
-                <div className="form-group">
-                  <label htmlFor="name">Name</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="name"
-                    defaultValue={user.username}
-                    onChange={onNameChange}
-                  />
-                </div>
+class Profile extends Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      currentAction: '',
+      src: null,
+      crop: {
+        unit: '%',
+        width: 30,
+        aspect: 1/1
+      },
+      croppedImageUrl: null,
+      croppedImage: null,
+    }
+  }
 
-                <div className="form-group">
-                  <label htmlFor="tcbatch">Tc Batch</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="tcbatch"
-                    defaultValue={user.tcbatch}
-                    onChange={onBatchChange}
-                  />
-                </div>
+  handleFile = (e) => {
+    const fileReader = new FileReader();
+    fileReader.onloadend = () => {
+      this.setState({src:fileReader.result})
+    }
+    fileReader.readAsDataURL(e.target.files[0]);
+  }
 
-                <div className="form-group">
-                  <label htmlFor="origin">Origin</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="origin"
-                    defaultValue={user.origin}
-                    onChange={onOriginChange}
-                  />
-                </div>
+  handleSubmit = (e) => {
+    e.preventDefault();
+    // const user = this.props.currentUser
+    const formData = new FormData();
 
-                <div className="form-group">
-                  <label htmlFor="dob">Date of Birth</label>
-                  <input
-                    type="date"
-                    className="form-control"
-                    id="dob"
-                    defaultValue={user.dob}
-                    onChange={onDateChange}
-                  />
-                </div>
+    // formData.append('user[id]', user.id);
+    formData.append('file', this.state.croppedImage);
 
-              </div>
+    // console.log(formData);
+    // this.addPhotoTouser(/*user,*/ formData);
+    axios.post('http://localhost:3027/profile-picture', formData, {})
+      .then(response => {
+        console.log(response);
+        if(response.status === 200){
+          this.setState({currentAction:null})
+        }
+      })
+  }
+
+  onImageLoaded = (image) => {
+    this.imageRef = image;
+    // console.log(image);
+  }
+
+  onCropChange = (crop) => {
+    this.setState({crop});
+    // console.log(crop);
+  }
+
+  onCropComplete = (crop) => {
+    if(this.imageRef && crop.width && crop.height){
+      const croppedImageUrl = this.getCroppedImg(this.imageRef, crop);
+      this.setState({croppedImageUrl});
+    }
+  }
+
+  getCroppedImg(image, crop) {
+    const canvas = document.createElement('canvas');
+    const scaleX = image.naturalWidth / image.width;
+    const scaleY = image.naturalHeight /image.height;
+    canvas.width = crop.width;
+    canvas.height = crop.height;
+    const ctx = canvas.getContext("2d");
+
+    ctx.drawImage(
+      image,
+      crop.x * scaleX,
+      crop.y * scaleY,
+      crop.width * scaleX,
+      crop.height * scaleY,
+      0,
+      0,
+      crop.width,
+      crop.height
+    )
+
+    const reader = new FileReader();
+    const id = this.props.user.id;
+    canvas.toBlob(blob => {
+      reader.readAsDataURL(blob)
+      reader.onloadend = () => {
+        this.dataUrlToFile(reader.result, `${id}_avatar.jpg`);
+      }
+    })
+  }
+
+  dataUrlToFile = (dataUrl, fileName) => {
+    let arr = dataUrl.split(','),
+        mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]),
+        n = bstr.length,
+        u8arr = new Uint8Array(n);
+
+    while(n--){
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    let croppedImage = new File([u8arr], fileName, {type:mime});
+    this.setState({croppedImage:croppedImage});
+    console.log(croppedImage);
+  }
+
+  addPhotoTouser = (/*user,*/ formData) => {
+    console.log(formData);
+    console.log(this.state);
+  }
+
+  onActionUpdate = (action) => {
+    this.setState({currentAction:action});
+  }
+
+  render(){
+    const {crop, src} = this.state;
+    // eslint-disable-next-line
+    const { about, dob, email, id, origin, profile_picture, tcbatch, username} = this.props.user;
+    return (
+      <>
+        {this.state.currentAction === 'selecting-image'?
+        <div className="container">
+          <form onSubmit={this.handleSubmit}>
+            <div className="container">
+              <button> Cancel</button>
+              <button> Save </button>
             </div>
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={closeModal}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={update}>
-            update
-          </Button>
-        </Modal.Footer>
-      </Modal>
-      <div
-        className="container-fluid"
-        id="headerCover"
-        style={{
-          background:'url(http://localhost:3027/picture/Crocus_Wallpaper_by_Roy_Tanck.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center center'
-          }}
-        >
-        <div id="headerCoverInner" className="row justify-content-around align-items-center">
-          <div className="col-4 d-flex justify-content-center">
             <input
               type="file"
-              id="prof-picture-input"
+              onChange={this.handleFile}
             />
-            <img
-              className="img-fluid profile-picture"
-              src="http://localhost:3027/picture/avatar.jpg"
-              alt="avatar"
-            />
-            <label id="prof-pict-input-label" htmlFor="prof-picture-input">
-              <FontAwesomeIcon icon={faCameraRetro} />
-            </label>
-          </div>
-          <div className="col-5">
-            <p>the quick brown fox jumps over tha lazy dog</p>
-          </div>
-
+            {src && (
+              <ReactCrop
+                src={src}
+                crop={crop}
+                onImageLoaded={this.onImageLoaded}
+                onComplete={this.onCropComplete}
+                onChange={this.onCropChange}
+              />
+            )}
+          </form>
         </div>
-      </div>
+        :
+        <div className="container-fluid" id="cover">
+          <div className="row justify-content-center" id="cover-inner">
 
-      <div className="container mt-2">
-        <ul className="list-group">
-          <li className="list-group-item"> {user.username}</li>
-          <li className="list-group-item">TC batch {user.tcbatch}</li>
-          <li className="list-group-item">origin: {user.origin}</li>
-          <li className="list-group-item">Birthday: {moment(user.dob).format('MMM Do YYYY')}</li>
-        </ul>
-        <div className="text-center">
-          <button
-            onClick={showModal}
-            className="btn btn-sm btn-secondary">
-            <FontAwesomeIcon icon={faPencilAlt}
-            />
-          </button>
+            <div className="col-4">
+              <img className="profile-picture" src={`http://localhost:3027/picture/${profile_picture}`} alt={profile_picture} />
+
+              <span
+                id="profile-picture-button"
+                onClick={()=>this.onActionUpdate('selecting-image')}
+              >
+                <FontAwesomeIcon icon={faCameraRetro} />
+              </span>
+            </div>
+
+            <div className="col-5">
+              {about}
+            </div>
+
+          </div>
         </div>
-      </div>
-    </>
-  )
+        }
+      </>
+    )
+  }
 }
 
 export default Profile;
-/*
-  username |      email       | tcbatch | origin | dob | profile_picture
-*/
