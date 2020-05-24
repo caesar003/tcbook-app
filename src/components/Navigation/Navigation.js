@@ -10,7 +10,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import NavButton from '../subComponents/NavButton/NavButton';
 
-const Navigation = ({onRouteChange, currentRoute, signingOut}) => {
+const Navigation = ({onRouteChange, currentRoute, signingOut, isSigningOut}) => {
   return (
     <>
     <div className="container-fluid fixed-bottom" id="navbar">
@@ -46,7 +46,7 @@ const Navigation = ({onRouteChange, currentRoute, signingOut}) => {
           icon={faEnvelope}
         />
         <NavButton
-          onClickAction={signingOut}
+          onClickAction={isSigningOut}
           currentRoute={currentRoute}
           route=""
           icon={faSignOutAlt}

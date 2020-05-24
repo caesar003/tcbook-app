@@ -10,27 +10,27 @@ class Login extends Component {
     this.state={
       email:'',
       password:'',
-      formHasMessage: false,
-      messageType: '',
-      message: '',
+      formHasMessage: this.props.signInMessage.formHasMessage,
+      alertType: this.props.signInMessage.alertType,
+      message: this.props.signInMessage.message,
     }
   }
 
   onEmailChange = (e) => {
-    this.clearMessage();
+    // this.clearMessage();
     this.setState({email:e.target.value});
   }
 
   onPasswordChange = (e) => {
-    this.clearMessage();
+    // this.clearMessage();
     this.setState({password:e.target.value});
   }
-  showSignInMessage = (messageType, message) => {
+  showSignInMessage = (alertType, message) => {
     this.setState({
-      messageType: messageType,
+      alertType: alertType,
       message: message,
       formHasMessage:true,
-    })
+    });
   }
   clearMessage = () => {
     this.setState({
@@ -60,7 +60,7 @@ class Login extends Component {
         })
         .then(response => response.json())
         .then(data=>{
-          console.log(data);
+          
           if(data === '400'){
             this.showSignInMessage('alert alert-danger', 'Either password or email is incorrect!');
           } else {
@@ -109,7 +109,7 @@ class Login extends Component {
               </form>
               {
                 this.state.formHasMessage?
-                  <div className={this.state.messageType}>
+                  <div className={this.state.alertType}>
                     {this.state.message}
                   </div>
                 :''

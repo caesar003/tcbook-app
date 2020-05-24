@@ -23,28 +23,68 @@ class Register extends Component {
   }
 
   onEmailChange = (e) => {
-    console.log(e.target.value);
+    this.setState({email:e.target.value})
   }
 
   onPasswordChange = (e) => {
-    console.log(e.target.value);
+    this.setState({password:e.target.value})
   }
 
   onConfirmPasswordChange = (e) => {
-    console.log(e.target.value);
+    this.setState({password2:e.target.value})
   }
 
   onNameChange = (e) => {
-    console.log(e.target.value);
+    this.setState({name:e.target.value})
   }
 
   onBatchChange = (e) => {
-    console.log(e.target.value);
+    this.setState({batch:e.target.value})
+  }
+
+  showSignUpMessage = (message) => {
+    this.setState({invalidMsg:message});
+    this.setState({isFormInvalid:true});
   }
 
   onSigningUp = (e) => {
     e.preventDefault();
-    console.log('signing up');
+    const email = this.state.email,
+          name = this.state.name,
+          batch = this.state.batch,
+          password = this.state.password,
+          password2 = this.state.password2;
+    if(!email || !name || !batch || !password || !password2){
+      this.showSignUpMessage('please fill out all fields');
+    } else {
+      if(!/\S+@\S+\.\S+/.test(email)){
+        this.showSignUpMessage('Please enter valid email!');
+      } else {
+        if(password!==password2){
+          this.showSignUpMessage('passwords don\'t match!');
+        } else {
+          fetch('http://localhost:3027/register', {
+            method: 'post',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({
+              email: email,
+              password: password,
+              name: name,
+              batch: batch,
+            })
+          })
+          .then(response => response.json())
+          .then(response => {
+            if(response==='error'){
+              console.log('Error Signing Up!');
+            } else {
+              console.log('Registration Successfull');
+              this.props.onRegistrationSuccess();
+            }
+          }) // end fetch block,
+        }
+      }
+    }
   }
 
   render(){
@@ -93,7 +133,7 @@ class Register extends Component {
 
                 <button type="submit"
                   className="btn btn-warning"
-                  
+
                 >
                   <FontAwesomeIcon icon={faUserPlus} /> Sign up</button>
                 <br />
@@ -103,7 +143,11 @@ class Register extends Component {
                   onClick={() => this.props.onRouteChange('signin')}
                   > login</span> here. </small>
               </form>
-              {this.state.isFormInvalid?this.renderMessage():''}
+              {this.state.isFormInvalid?
+                  <div className="alert alert-danger">
+                    {this.state.invalidMsg}
+                  </div>
+                :''}
             </div>
           </div>
         </div>

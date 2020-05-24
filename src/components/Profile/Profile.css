@@ -1,41 +1,20 @@
-/*
-#headerCover {
-   height: 240px;
+@font-face {
+  font-family: 'BRUSHSCI';
+  src: local('BRUSHSCI'), url('../../fonts/BRUSHSCI.TTF') format('truetype');
 }
-#headerCoverInner {
-  color:#fff;
-  background-color: rgba(20, 0, 0, 0.3);
-  height: 100%;
-}
-.profile-picture {
-  width: 55px;
-  border-radius: 50%;
-}
-#prof-picture-input {
-  height: 0.01px;
-  width: 0.01px;
-}
-#prof-pict-input-label {
-  position: absolute;
-  bottom: -25%;
-  right: 35%;
-}
-*/
 #cover {
-  border:1px solid black;
   min-height: 240px;
   background: url('http://localhost:3027/picture/Crocus_Wallpaper_by_Roy_Tanck.jpg');
   background-size: cover;
   background-position: center center;
+  margin-bottom: 12px;
 }
 #cover-inner{
-  border:1px solid #00f;
   height: 240px;
-  background: rgba(0,0,0,0.2);
+  background: rgba(0,0,0,0.5);
   color:#fff;
 }
 #cover-inner .col-5, #cover-inner .col-4 {
-  border: 1px solid grey;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -49,4 +28,56 @@
   position: absolute;
   right: 35%;
   bottom:35%;
+}
+#update-info-button {
+  background: #ddd;
+  border-radius: 5px;
+  border: 1px solid grey;
+  font-size: 0.7rem;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+  cursor: pointer;
+}
+
+#update-info-button:hover{
+  opacity: 0.6;
+  color:#f00;
+}
+
+label {
+  font-size: smaller;
+  font-weight: 100;
+}
+
+#about{
+  font-family: BRUSHSCI;
+  font-size: 1.2rem;
+}
+
+#about-input-field{
+  border-radius: 0;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+#about-back-button{
+  border-bottom-left-radius: 8px;
+  padding:0;
+  cursor: pointer;
+}
+#about-submit{
+  border-bottom-right-radius: 8px;
+  padding:0;
+}
+#about-submit button {
+  background-color: inherit;
+  border:none;
+  color:#fff;
+  width: 100%;
+  border-bottom-right-radius: 8px;
+}
+#about p {
+  margin-bottom: 0;
+}
+#edit-about-button {
+  font-size: 0.7rem;
+  cursor: pointer;
 }

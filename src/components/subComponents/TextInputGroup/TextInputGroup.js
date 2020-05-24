@@ -1,7 +1,7 @@
 import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
-const TextInputGroup = ({label, type, onChangeAction, id, icon}) => {
+const TextInputGroup = ({label, type, onChangeAction, id, icon, val}) => {
   return (
     <div className="form-group">
       <label htmlFor="email">{label}</label>
@@ -17,6 +17,7 @@ const TextInputGroup = ({label, type, onChangeAction, id, icon}) => {
           className="form-control"
           id={id}
           onChange={onChangeAction}
+          defaultValue={val?val:''}
         />
       </div>
     </div>
