@@ -118,8 +118,6 @@ class Profile extends Component{
 
   onAboutUpdate = (e) => {
     e.preventDefault();
-    const id = this.state.id;
-    const about = this.state.about;
     fetch('http://localhost:3027/about', {
       method: 'put',
       headers: {'Content-Type': 'application/json'},
@@ -157,7 +155,10 @@ class Profile extends Component{
       axios.post('http://localhost:3027/profile-picture', formData, {})
       .then(response => {
         if(response.status === 200){
-          this.setState({currentAction:null});
+          this.setState({
+            currentAction:null,
+            src:null
+          });
           setTimeout(()=>this.props.loadUser(), 200);
         }
       })
@@ -241,7 +242,7 @@ class Profile extends Component{
                 <div className="row justify-content-center" id="cover-inner">
 
                   <div className="col-4">
-                    <img className="profile-picture" src={`http://localhost:3027/picture/${profile_picture}`} alt={profile_picture} />
+                    <img className="profile-picture" src={`http://localhost:3027/picture/${profile_picture}?v=${Date.now()}`} alt={profile_picture} />
 
                     <span
                       id="profile-picture-button"

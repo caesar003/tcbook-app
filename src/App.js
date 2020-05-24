@@ -39,17 +39,14 @@ class App extends Component {
   }
 
   componentDidMount(){
-    this.fetchUsers();
+    // this.fetchUsers();
   }
 
-  fetchUsers = () => {
-    fetch('http://localhost:3027/users')
+  fetchUsers = (id) => {
+    fetch('http://localhost:3027/users/'+id)
     .then(response=>response.json())
     .then(response=>{
-      // this.setState({Users:response});
-      // console.log(response);
       this.setState({users:response});
-      console.log(this.state.users);
     })
   }
 
@@ -85,14 +82,11 @@ class App extends Component {
   }
 
   loadUser = (user) => {
+    let id;
     if(!user){
       fetch('http://localhost:3027/profile/'+this.state.user.id)
       .then(response=>response.json())
       .then(response=>{
-        // this.setState({Users:response});
-        console.log(response);
-        // this.setState({users:response});
-        // console.log(this.state.users);
         this.setState({
           user:{
             about: response.about,
@@ -106,6 +100,7 @@ class App extends Component {
             completename:response.completename
           }
         });
+        id = response.id;
       });
     } else {
       this.setState({
@@ -121,7 +116,9 @@ class App extends Component {
           completename:user.completename
         }
       });
+      id = user.id;
     }
+    this.fetchUsers(id);
   }
 
   onRegistrationSuccess = () => {
@@ -156,25 +153,27 @@ class App extends Component {
                 onHide={this.signOutCancel}
                 animation={false}
               >
-              <Modal.Header closeButton>
+                <Modal.Header closeButton> </Modal.Header>
 
-              </Modal.Header>
+                <Modal.Body>
+                  <div className="text-center">
+                  Sign out?
+                  </div>
+                </Modal.Body>
 
-              <Modal.Body>
-                <div className="text-center">
-                Sign out?
-                </div>
-              </Modal.Body>
-
-              <Modal.Footer>
-                <button className="btn btn-info"
-                  onClick={this.signOutCancel}
-                >Cancel</button>
-                <button className="btn btn-outline-warning"
-                  onClick={this.signingOut}
-                >Sign me out</button>
-              </Modal.Footer>
-
+                <Modal.Footer>
+                  <button
+                    className="btn btn-info"
+                    onClick={this.signOutCancel}
+                  >Cancel
+                  </button>
+                  <button
+                    className="btn btn-outline-warning"
+                    onClick={this.signingOut}
+                  >
+                    Sign me out
+                  </button>
+                </Modal.Footer>
               </Modal>
               {
                 this.state.route === 'home'?
@@ -193,7 +192,9 @@ class App extends Component {
                         <Member
                           users={this.state.users}
                         />
-                      : <Message />
+                      : <Message
+                          users={this.state.users}
+                        />
                     )
                   )
                 )

@@ -1,0 +1,43 @@
+/* .sender {
+  font-weight: bold;
+}
+.message-text {
+  font-size: smaller;
+  font-weight: 100;
+}
+
+.message-received {
+  text-align: right;
+}
+
+.message-received .message-text {
+  background-color: #00f;
+  max-width: 50%;
+} */
+
+.message-sent-container, .message-received-container {
+  max-width: 80%;
+}
+.message-text {
+  padding: 8px;
+  border-radius: 4px;
+  color:white;
+}
+.message-sent-container .message-text {
+  background: linear-gradient(45deg, #007bb6, #00aced);
+}
+.message-received-container .message-text {
+  background: linear-gradient(to right, #249991, #6cdf58);
+}
+.sent-date {
+  font-size: smaller;
+  font-style: italic;
+}
+
+
+#new-conversation-button {
+  border-radius: 50%;
+  position: fixed;
+  bottom: 10%;
+  right: 5%;
+}
