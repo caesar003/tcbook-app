@@ -5,11 +5,11 @@ import {
   faArrowLeft
 } from '@fortawesome/free-solid-svg-icons';
 
-const BackButton = ({action}) => {
+const BackButton = ({action, extra}) => {
   return (
-    <div className="container-fluid d-flex justify-content-start back-button">
+    <div className="fixed-top container-fluid d-flex justify-content-start back-button">
       <span
-        onClick={()=>action(null)}
+        onClick={()=>action(extra?extra:null)}
       >
         <FontAwesomeIcon icon={faArrowLeft} />
       </span>

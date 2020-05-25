@@ -18,6 +18,7 @@ class App extends Component {
       route: 'signin',
       isSignedIn: false,
       isSigningOut: false,
+      isNavShown: true,
       signInMessage: {
         alertType: '',
         message: '',
@@ -40,6 +41,10 @@ class App extends Component {
 
   componentDidMount(){
     // this.fetchUsers();
+  }
+
+  showNav = (bool) => {
+    this.setState({isNavShown:bool});
   }
 
   fetchUsers = (id) => {
@@ -142,12 +147,16 @@ class App extends Component {
             /* first check sign in status,
                then if it is, we want navbar no matter what */
             <>
-              <Navigation
-                onRouteChange={this.onRouteChange}
-                currentRoute={this.state.route}
-                signingOut={this.signingOut}
-                isSigningOut={this.isSigningOut}
-              />
+              {
+                this.state.isNavShown?
+                <Navigation
+                  onRouteChange={this.onRouteChange}
+                  currentRoute={this.state.route}
+                  signingOut={this.signingOut}
+                  isSigningOut={this.isSigningOut}
+                />
+                :''
+              }
               <Modal
                 show={this.state.isSigningOut}
                 onHide={this.signOutCancel}
@@ -193,7 +202,9 @@ class App extends Component {
                           users={this.state.users}
                         />
                       : <Message
+                          user={this.state.user}
                           users={this.state.users}
+                          showNav={this.showNav}
                         />
                     )
                   )
